@@ -81,5 +81,7 @@ jobs:
         with:
           name: production-build
           path: app/
-      - name: checking
-        run: ls ./app
+      - name: build docker image
+        run: |
+          docker build -t ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:latest .
+          docker images 
