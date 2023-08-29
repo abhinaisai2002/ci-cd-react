@@ -60,3 +60,10 @@ jobs:
         with:
           name: production-build
           path: app/dist
+  
+  containerization:
+    name: Creating a docker image and pushing it into the repo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker version
+        run: docker
