@@ -53,5 +53,10 @@ jobs:
       - name: building the artifacts	
         run: |
           cd app
-          npm run build					
-
+          npm run build		
+          ls
+      - name: uploading the artifacts
+        uses: actions/upload-artifact@v3			
+        with:
+          name: production-build
+          path: /app/dist
