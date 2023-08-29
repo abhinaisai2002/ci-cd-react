@@ -69,11 +69,11 @@ jobs:
       - name: Docker login
         run: |
           echo ${{ secrets.DOCKER_PASSWORD}} | docker login --username ${{ secrets.DOCKER_USERNAME}} --password-stdin 
-
       - name: Docker username
         run: |
           docker info | grep Username
-          cat $HOME/.docker/config.json
+      - name: Creating workdir
+        run: mkdir app
       - name: Bringing the artifacts
         uses: actions/upload-artifact@v3			
         with:
