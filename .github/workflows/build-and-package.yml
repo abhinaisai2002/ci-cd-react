@@ -75,7 +75,7 @@ jobs:
       - name: Creating workdir
         run: mkdir app
       - name: Bringing the artifacts
-        uses: actions/upload-artifact@v3			
+        uses: actions/download-artifact@v3			
         with:
           name: production-build
           path: app/
