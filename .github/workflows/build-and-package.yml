@@ -84,4 +84,6 @@ jobs:
       - name: build docker image
         run: |
           docker build -t ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:latest ./app
-          docker images 
+      - name: Pushing docker image into repo
+        run: |
+          docker push ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:latest 
