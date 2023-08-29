@@ -19,7 +19,7 @@ jobs:
       - name: checking the node version
         run: echo "::notice::${{steps.node_step.outputs.node_version}}"
   code_checkout:
-    needs: checking_environment
+    needs: [checking_environment]
     if: success()
     name: checking out the code from the repo	and installing the dependencies  
     runs-on: ubuntu-latest
@@ -62,8 +62,11 @@ jobs:
           path: app/dist
   
   containerization:
+    needs: [code_checkout]
     name: Creating a docker image and pushing it into the repo
     runs-on: ubuntu-latest
     steps:
-      - name: Docker version
-        run: docker
+      - name: Docker login
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker info | grep Username
