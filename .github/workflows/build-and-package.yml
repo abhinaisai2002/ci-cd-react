@@ -1,0 +1,56 @@
+name: Build and package
+run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - abhinai
+
+jobs:
+  checking_environment:
+    outputs:
+      node_version: ${{ steps.node_step.outputs.node_version }}
+    name: checking the environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: echoing node version
+        run : echo node_version=`node -v` > "$GITHUB_OUTPUT"
+        id: node_step
+      - name: checking the node version
+        run: echo "::notice::${{steps.node_step.outputs.node_version}}"
+  code_checkout:
+    needs: checking_environment
+    if: success()
+    name: checking out the code from the repo	and installing the dependencies  
+    runs-on: ubuntu-latest
+    steps:
+      - name: confirming node version
+        run: echo "::notice::${{needs.checking_environment.outputs.node_version}}"
+      - name: creating project folder
+        run: mkdir app
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.sha }}
+          path: './app'
+      - name: listing all the files
+        run: |
+          cd app
+          ls
+      - name: Caching all the dependencies
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: npm-cache-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-cache-
+      - name: installing dependencies
+        run: |
+          cd app
+          npm install		
+      - name: building the artifacts	
+        run: |
+          cd app
+          npm run build					
