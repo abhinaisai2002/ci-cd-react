@@ -54,3 +54,4 @@ jobs:
         run: |
           cd app
           npm run build					
+
