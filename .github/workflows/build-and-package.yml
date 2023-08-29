@@ -59,7 +59,9 @@ jobs:
         uses: actions/upload-artifact@v3			
         with:
           name: production-build
-          path: app/dist
+          path: |
+            app/dist
+            app/Dockerfile
   
   containerization:
     needs: [code_checkout]
