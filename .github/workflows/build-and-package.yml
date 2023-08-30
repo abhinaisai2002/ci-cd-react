@@ -42,7 +42,6 @@ jobs:
         with:
           path: |
             ~/.npm
-            ${{ github.workspace }}/.next/cache
           key: npm-cache-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             npm-cache-
