@@ -1,0 +1,88 @@
+name: Build and package
+run-name: Deployed by @${{ github.actor }}
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened]
+
+jobs:
+  checking_environment:
+    outputs:
+      node_version: ${{ steps.node_step.outputs.node_version }}
+    name: checking the environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: echoing node version
+        run : echo node_version=`node -v` > "$GITHUB_OUTPUT"
+        id: node_step
+      - name: checking the node version
+        run: echo "::notice::${{steps.node_step.outputs.node_version}}"
+  code_checkout:
+    needs: [checking_environment]
+    if: success()
+    name: checking out the code from the repo	and installing the dependencies  
+    runs-on: ubuntu-latest
+    steps:
+      - name: confirming node version
+        run: echo "::notice::${{needs.checking_environment.outputs.node_version}}"
+      - name: creating project folder
+        run: mkdir app
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+          path: './app'
+      - name: listing all the files
+        run: |
+          cd app
+          ls
+      - name: Caching all the dependencies
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+          key: npm-cache-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-cache-
+      - name: installing dependencies
+        run: |
+          cd app
+          npm install		
+      - name: building the artifacts	
+        run: |
+          cd app
+          npm run build		
+          ls
+      - name: uploading the artifacts
+        uses: actions/upload-artifact@v3			
+        with:
+          name: production-build
+          path: |
+            app/dist
+            app/Dockerfile
+  
+  containerization:
+    needs: [code_checkout]
+    name: Creating a docker image and pushing it into the repo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker login
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD}} | docker login --username ${{ secrets.DOCKER_USERNAME}} --password-stdin 
+      - name: Docker username
+        run: |
+          docker info | grep Username
+      - name: Creating workdir
+        run: mkdir app
+      - name: Bringing the artifacts
+        uses: actions/download-artifact@v3			
+        with:
+          name: production-build
+          path: app/
+      - name: build docker image
+        run: |
+          docker build -t ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:latest ./app
+      - name: Pushing docker image into repo
+        run: |
+          docker push ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:latest 
