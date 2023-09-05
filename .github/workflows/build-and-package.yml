@@ -107,7 +107,7 @@ jobs:
           echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY }}" >> credentials 
           echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_KEY }}" >> credentials 
           cat credentials
-          echo "[default]" >> config
+          echo "[default]" >> config 
           cat config
       - name: Bringing the artifacts
         uses: actions/download-artifact@v3			
