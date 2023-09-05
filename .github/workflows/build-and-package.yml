@@ -133,4 +133,5 @@ jobs:
           terraform init
           terraform validate
           terraform apply -auto-approve
+          terraform output -json ec2_public_ip"
     
