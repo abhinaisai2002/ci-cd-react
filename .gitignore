@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+terraform/kalyan.pem
+terraform/.terraform/
+terraform/.terraform.lock.hcl
