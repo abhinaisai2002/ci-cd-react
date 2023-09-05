@@ -93,45 +93,45 @@ jobs:
       - name: Pushing docker image into repo
         run: |
           docker push ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:latest
-  get_keys:
-    runs-on: ubuntu-latest
-    needs: [containerization]
-    name: deployment into aws
-    steps:
-      - uses: hashicorp/setup-terraform@v2
-      - name: get_aws_keys
-        run: |
-          mkdir ~/.aws/
-          cd ~/.aws/
-          echo "[default]" >> credentials
-          echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY }}" >> credentials 
-          echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_KEY }}" >> credentials 
-          cat credentials
-          echo "[default]" >> config 
-          cat config
-      - name: Bringing the artifacts
-        uses: actions/download-artifact@v3			
-        with:
-          name: terraform-files
-      - name: private key
-        run: |
-          pwd
-          echo "${{ secrets.AWS_KEY_PAIR }}" > kalyan.pem
-          sudo chmod 400 kalyan.pem
-      - name: Caching all the dependencies
-        id: cache-dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            .terraform
-            .terraform.lock.hcl
-          key: terraform-cache-${{ hashFiles('./**.tf') }}
-          restore-keys: |
-            terraform-cache
-      - name: terrform
-        run: |
-          terraform init
-          terraform validate
-          terraform apply -auto-approve
-          terraform output -json ec2_public_ip"
+  # get_keys:
+  #   runs-on: ubuntu-latest
+  #   needs: [containerization]
+  #   name: deployment into aws
+  #   steps:
+  #     - uses: hashicorp/setup-terraform@v2
+  #     - name: get_aws_keys
+  #       run: |
+  #         mkdir ~/.aws/
+  #         cd ~/.aws/
+  #         echo "[default]" >> credentials
+  #         echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY }}" >> credentials 
+  #         echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_KEY }}" >> credentials 
+  #         cat credentials
+  #         echo "[default]" >> config 
+  #         cat config
+  #     - name: Bringing the artifacts
+  #       uses: actions/download-artifact@v3			
+  #       with:
+  #         name: terraform-files
+  #     - name: private key
+  #       run: |
+  #         pwd
+  #         echo "${{ secrets.AWS_KEY_PAIR }}" > kalyan.pem
+  #         sudo chmod 400 kalyan.pem
+  #     - name: Caching all the dependencies
+  #       id: cache-dependencies
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           .terraform
+  #           .terraform.lock.hcl
+  #         key: terraform-cache-${{ hashFiles('./**.tf') }}
+  #         restore-keys: |
+  #           terraform-cache
+  #     - name: terrform
+  #       run: |
+  #         terraform init
+  #         terraform validate
+  #         terraform apply -auto-approve
+  #         terraform output -json ec2_public_ip
     
