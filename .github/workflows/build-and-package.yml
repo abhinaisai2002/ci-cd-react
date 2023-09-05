@@ -95,6 +95,7 @@ jobs:
           docker push ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:latest
   get_keys:
     runs-on: ubuntu-latest
+    needs: [containerization]
     name: deployment into aws
     steps:
       - uses: hashicorp/setup-terraform@v2
@@ -124,7 +125,7 @@ jobs:
           path: |
             .terraform
             .terraform.lock.hcl
-          key: terraform-cache-${{ hashFiles(**.tf) }}
+          key: terraform-cache-${{ hashFiles(./**.tf) }}
           restore-keys: |
             terraform-cache
       - name: terrform
