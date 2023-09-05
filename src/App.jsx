@@ -7,7 +7,7 @@ function App() {
 
   return (
     <>
-      CiCD kalyan anna thop ra
+      CiCD tarun anna thop ra
     </>
   )
 }
